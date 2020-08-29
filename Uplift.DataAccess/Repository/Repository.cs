@@ -53,17 +53,30 @@ namespace Uplift.DataAccess.Repository
 
         public T GetFirstOrDefault(Expression<Func<T, bool>> filter = null, string includeProperties = null)
         {
-            throw new NotImplementedException();
+            IQueryable<T> query = dbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            if (includeProperties != null)
+            {
+                foreach (var propert in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(propert);
+                }
+            }
+            return query.FirstOrDefault();
         }
 
         public void Remove(int id)
         {
-            throw new NotImplementedException();
+            T entityToRemove = dbSet.Find(id);
+            Remove(entityToRemove);
         }
 
         public void Remove(T entity)
         {
-            throw new NotImplementedException();
+            dbSet.Remove(entity);
         }
     }
 }
